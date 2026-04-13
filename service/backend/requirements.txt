@@ -1,0 +1,6 @@
+Django>=5.0,<5.5
+psycopg2-binary>=2.9
+gunicorn>=21.0
+pytest>=8.0
+pytest-django>=4.0
+pytest-bdd>=6.0
