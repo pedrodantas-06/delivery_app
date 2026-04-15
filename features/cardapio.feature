@@ -4,17 +4,6 @@ Feature: Cardápio do aplicativo de delivery
   Cada item pertence a uma única categoria. 
   O cardápio pode ser acessado por meio de um link público e persistente, não sendo necessário login para visualização.
 
-Cenário baseado em GUI
-	Cenário: submissão bem-sucedida da autoavaliação
+Cenário 1 – Cadastro de item no cardápio com dados válidos O responsável pelo restaurante acessa a área de gerenciamento do cardápio e preenche o formulário de novo item com nome, preço e, opcionalmente, descrição. Ao confirmar, o item aparece listado no cardápio do restaurante. O cenário valida o fluxo feliz de adição de um item.
 
-	Dado que estou na página "Avaliação"
-	E consigo ver a lista de metas com os conceitos atribuídos pelo professor
-	E consigo ver os botões "Select" com campos de autoavaliação vazios para todas as metas
-	Quando clico no botão "Select" da meta "Entender conceitos de requisitos"
-	E seleciono o conceito "MA"
-	E clico no botão "Select" da meta "Especificar requisitos com qualidade"
-	E seleciono o conceito "MPA"
-	E clico no botão "Select" da meta "Entender conceitos de gerência de configuração"
-	E seleciono o conceito "MA"
-	E clico no botão "Envie"
-	Então sou redirecionado para a página de confirmação de envio
+Cenário 2 – Tentativa de cadastro de item com dados inválidos ou incompletos O responsável tenta cadastrar um item deixando o nome em branco ou inserindo um preço negativo/zero. O sistema deve exibir mensagens de erro adequadas e impedir o cadastro. O cenário valida as regras de validação do formulário.
