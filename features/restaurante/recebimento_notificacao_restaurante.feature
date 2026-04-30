@@ -4,8 +4,8 @@ Funcionalidade: Recebimento de notificação do pedido
   Para poder confeccioná-los e entregá-los
 
   Background:
-    Given que o restaurante está logado no sistema
-    And que o restaurante está conectado via Socket
+    Given que o restaurante está logado como "dono" no sistema
+    And que o restaurante está conectado "via Socket"
 
   Scenario: Recebimento de novo pedido
     When um cliente finaliza um novo pedido
