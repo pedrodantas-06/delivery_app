@@ -8,27 +8,30 @@ Feature: Cadastro e manutenção de métodos de pagamento
 
   Scenario: Inserir novo método de pagamento com sucesso
     Given que o usuário "cliente"  está logado no app
+    And não possui nenhum método de pagamento cadastrado
     When ele acessar a área "Meus Pagamentos"
     And clicar em "Adicionar novo método de pagamento"
     And preencher os dados de um cartão de crédito válido
     And clicar em "Salvar"
     Then o sistema deve exibir a mensagem "Método de pagamento adicionado com sucesso"
-    And o novo cartão deve aparecer na lista de métodos de pagamento
+    And o novo método de pagamento deve aparecer na lista de métodos cadastrados do usuário
 
   Scenario: Remover um método de pagamento existente
     Given que o usuário "cliente" possui o cartão "Visa final 1234" cadastrado
     When ele selecionar o cartao "Visa final 1234" na lista de métodos de pagamento
     And clicar em "Remover"
-    And confirmar a remoção
+    And clicar em "Confirmar"
     Then o cartao "Visa final 1234" deve ser removido da lista de métodos de pagamento
-    And o sistema deve exibir "Método de pagamento removido"
+    And o sistema deve exibir a mensagem "Método de pagamento removido"
+    And "nenhum" cartão é exibido na lista de cartões disponíveis
 
   Scenario: Atualizar dados de um método de pagamento
-    Given que o usuário "cliente" possui um cartão salvo como "Visa final 1234"
+    Given que o usuário "cliente" possui o cartão "Visa final 1234" cadastrado
+    And a data de validade do cartão "Visa final 1234" é "13/2027"
     When ele editar a data de validade desse cartão para "12/2026"
-    And salvar as alterações
-    Then o sistema deve exibir "Método de pagamento atualizado com sucesso"
-    And o cartão "Visa final 1234" deve ter a data de validade "12/2026" na lista de métodos de pagamento
+    And clicar em "Salvar alterações"
+    Then o sistema deve exibir a mensagem "Método de pagamento atualizado com sucesso"
+    And o cartão "Visa final 1234" deve ter como data de validade "12/2026"
 
 
 Feature: Cadastro e manutenção de promoções
@@ -108,15 +111,16 @@ Feature: Estorno de saldo ao cancelar pedido
   Scenario: Realizar estorno de saldo ao cancelar pedido antes do restaurante aceitar
     Given que existe um pedido com ID "PEDIDO123" e valor total de "100,00"
     And o pedido está com status "pago"
-    When o cliente solicita cancelamento do pedido antes do restaurante aceitar
+    When o cliente solicita cancelamento do pedido "antes" do restaurante aceitar
     Then o status do pedido deve ser atualizado para "Cancelado"
-    And o saldo de "100,00" deve ser estornado para o método de pagamento original
+    And o saldo de "100,00" deve ser exibido como disponível no saldo do cliente
     And o cliente recebe uma mensagem de confirmação do cancelamento
 
   Scenario: Tentar cancelar pedido depois do restaurante aceitar
     Given que existe um pedido com ID "PEDIDO123" e valor total de "100,00"
     And o pedido está com status "pago"
-    When o cliente solicita cancelamento do pedido depois do restaurante aceitar
+    When o cliente solicita cancelamento do pedido "depois" do restaurante aceitar
     Then o status do pedido deve permanecer como "Pago"
     And nenhum estorno deve ser realizado
     And o cliente recebe uma mensagem de erro indicando que o pedido não pode ser cancelado
+
