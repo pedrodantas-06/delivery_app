@@ -4,7 +4,7 @@ from typing import Optional
 from delivery.domain.entities import Deliverer, Order
 from delivery.domain.enums import DelivererStatus, OrderStatus
 from delivery.domain.ports import DelivererRepository, OrderRepository
-from delivery.infrastructure.models import DelivererModel, OrderModel
+from service.backend.delivery.infrastructure.models.deliverers_model import DelivererModel, OrderModel
 
 
 class DelivererRepositoryImpl(DelivererRepository):
