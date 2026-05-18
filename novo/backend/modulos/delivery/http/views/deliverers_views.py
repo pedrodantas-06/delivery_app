@@ -3,8 +3,8 @@ from uuid import UUID
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.http import require_http_methods
 
-from delivery.domain.enums import DelivererStatus
-from delivery.wires import deliverer_service
+from modulos.delivery.domain.enums import DelivererStatus
+from modulos.delivery.wires import deliverer_service
 
 
 def parse_body(request: HttpRequest) -> dict:

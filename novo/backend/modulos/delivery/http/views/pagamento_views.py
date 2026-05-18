@@ -1,7 +1,7 @@
 #TO-DO from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from delivery.infrastructure.models.pagamento_models import MetodoPagamento, Cupom, TransacaoPagamento
+from modulos.delivery.infrastructure.models.pagamento_model import MetodoPagamento, Cupom, TransacaoPagamento
 from datetime import datetime
 
 class MetodosPagamentoView(APIView):

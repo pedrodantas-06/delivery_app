@@ -1,9 +1,9 @@
 from uuid import UUID, uuid4
 from typing import Optional
 
-from delivery.domain.entities import Deliverer, Order
-from delivery.domain.enums import DelivererStatus, OrderStatus
-from delivery.domain.ports import DelivererRepository, OrderRepository
+from modulos.delivery.domain.entities import Deliverer, Order
+from modulos.delivery.domain.enums import DelivererStatus, OrderStatus
+from modulos.delivery.domain.ports import DelivererRepository, OrderRepository
 
 
 class DelivererService:

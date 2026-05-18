@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 from uuid import UUID
+from datetime import datetime
 
 from .enums import DelivererStatus, OrderStatus
 
@@ -12,6 +13,7 @@ class Deliverer:
     phone: str
     region: str
     status: DelivererStatus
+    created_at: Optional[datetime] = None
 
 
 @dataclass(frozen=True)
