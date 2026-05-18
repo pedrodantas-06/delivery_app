@@ -5,10 +5,10 @@ import pytest
 from django.test import Client
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from delivery.domain.enums import DelivererStatus, OrderStatus
-from delivery.infrastructure.models.deliverers_model import DelivererModel, OrderModel
+from modulos.delivery.domain.enums import DelivererStatus, OrderStatus
+from modulos.delivery.infrastructure.models.deliverers_model import DelivererModel, OrderModel
 
-scenarios('../features/deliverers.feature')
+scenarios('../deliverers/deliverers.feature')
 pytestmark = pytest.mark.django_db
 
 

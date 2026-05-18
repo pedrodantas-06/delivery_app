@@ -1,6 +1,6 @@
 from django.urls import path
-from service.backend.delivery.http.views.deliverers_views import deliverers_collection, update_deliverer_status, assign_order, reassign_order
-from service.backend.delivery.http.views.pagamento_views import AplicarCupomView, ComprovanteView, EstornarPagamentoView, MetodoPagamentoDetailView, MetodosPagamentoView, ProcessarPagamentoView
+from modulos.delivery.http.views.deliverers_views import deliverers_collection, update_deliverer_status, assign_order, reassign_order
+from modulos.delivery.http.views.pagamento_views import AplicarCupomView, ComprovanteView, EstornarPagamentoView, MetodoPagamentoDetailView, MetodosPagamentoView, ProcessarPagamentoView
 
 urlpatterns = [
     path('deliverers/', deliverers_collection, name='deliverers-collection'),
