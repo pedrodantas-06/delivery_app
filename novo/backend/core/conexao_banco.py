@@ -1,6 +1,5 @@
-import mysql.connector
-from mysql.connector import pooling
-from core.config import settings
+from mysql.connector import pooling, Error
+from backend.core.config import settings
 import logging
 
 # Configuração de log
@@ -15,8 +14,7 @@ class ConexaoBanco:
         if cls._connection_pool is None:
             try:
                 logger.info("Iniciando pool de conexões com MySQL...")
-                # ajuste: cls._connection_pool = pooling.MySQLConnectionPool(
-                cls._connection_pool = mysql.connector.pooling.MySQLConnectionPool(
+                cls._connection_pool = pooling.MySQLConnectionPool(
                     pool_name="delivery_pool",
                     pool_size=10,
                     pool_reset_session=True,
@@ -24,10 +22,12 @@ class ConexaoBanco:
                     port=settings.DB_PORT,
                     database=settings.DB_NAME,
                     user=settings.DB_USER,
-                    password=settings.DB_PASSWORD
+                    password=settings.DB_PASSWORD,
+                    charset="utf8mb4",
+                    init_command="SET NAMES utf8mb4"
                 )
                 logger.info("Pool de conexões criado com sucesso.")
-            except mysql.connector.Error as err:
+            except Error as err:
                 logger.error(f"Erro ao criar pool de conexões: {err}")
                 raise
         return cls._connection_pool
