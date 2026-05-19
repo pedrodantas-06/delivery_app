@@ -99,8 +99,6 @@ class RestauranteControle:
             if not restaurante:
                 return {"erro": "Restaurante não encontrado", "status_code": 404}
             
-            # Embora o BDD não exija erro se fechado aqui, é uma boa prática. 
-            # Mas vamos seguir o BDD: "o restaurante 123 está aberto" no background.
             # Ajuste, implementar se o restaurante estiver fechado, nao aceitar pedido
 
             novo_status = "Em preparo" if aceitacao == "aceito" else "Rejeitado"
