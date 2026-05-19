@@ -1,16 +1,16 @@
 services:
   db:
     image: mysql:latest
-    container_name: ${DB_DATABASE}
+    container_name: ${DB_NAME}
     restart: always
     environment:
-      - TZ=America/Sao_Paulo
-      - MYSQL_DATABASE=${DB_DATABASE}
+      - TZ=${TZ}
+      - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${SECRET_KEY}
     ports:
-      - "3306:3306"
+      - "${DB_PORT}:${DB_PORT}"
     volumes:
       - ./database/db_files:/var/lib/mysql
       - ./database/esquemas:/docker-entrypoint-initdb.d
@@ -25,14 +25,14 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: delivery_backend
+    container_name: ${BACKEND_NAME}
     restart: always
     environment:
       - DB_HOST=db
-      - DB_PORT=3306
+      - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_DATABASE=${DB_DATABASE}
+      - DB_NAME=${DB_NAME}
     ports:
       - "8000:8000"
     depends_on:
@@ -43,11 +43,11 @@ services:
 
   frontend:
     image: node:jod-alpine
-    container_name: delivery_frontend
+    container_name: ${FRONTEND_NAME}
     restart: always
     working_dir: /app
     environment:
-      - TZ="America/Sao_Paulo"
+      - TZ=${TZ}
     volumes:
       - ./frontend:/app
     ports:
