@@ -5,14 +5,14 @@ Feature: Edição de Informações do Restaurante
 
   Background:
     Given que o endpoint de "edição de restaurante" está "disponível"
-    And que eu sou o proprietário do "restaurante" de id "123"
-    And o "restaurante" cujo "id" é "123" existe na tabela "restaurantes" do banco de dados
+    And eu sou o proprietário do "restaurante" de id "123"
+    And que o "restaurante" cujo "id" é "123" "existe" na tabela "restaurantes" do banco de dados
 
   Scenario: Edição de informações permitidas
     When eu envio uma requisição ao endpoint de "edição de restaurante" com os dados:
       | id  | campo | novo_valor      |
       | 123 | nome  | Gosto Muito Bom |
-    Then o sistema deve atualizar o "restaurante" de id "123" com o novo "nome" para "Gosto Muito Bom" na tabela "restaurantes" do banco de dados
+    Then o sistema deve atualizar o "restaurante" cujo "id" é "123" com o novo "nome" para "Gosto Muito Bom" na tabela "restaurantes" do banco de dados
     And o sistema responde com o código HTTP "200"
 
   Scenario: Edição de informações proibidas
