@@ -1,4 +1,10 @@
-CREATE DATABASE IF NOT EXISTS yummicious_db;
+SET NAMES utf8mb4;
+
+-- CRIAÇÃO DO BANCO
+CREATE DATABASE IF NOT EXISTS yummicious_db
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
 USE yummicious_db;
 
 CREATE TABLE IF NOT EXISTS restaurantes (
