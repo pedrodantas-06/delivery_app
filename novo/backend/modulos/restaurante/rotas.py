@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 from modulos.restaurante.controle import RestauranteControle
 
-router = APIRouter(prefix="/restaurantes", tags=["Restaurantes"])
+router = APIRouter(prefix="", tags=["Restaurantes"])
 
 class RestauranteCreate(BaseModel):
     nome: str
@@ -25,14 +25,14 @@ class PedidoAcao(BaseModel):
     id_restaurante: int
     aceitacao: str # "aceito" ou "rejeitado"
 
-@router.post("/", status_code=201)
+@router.post("/restaurantes/cadastrar", status_code=201)
 async def cadastrar_restaurante(restaurante: RestauranteCreate):
     resultado = RestauranteControle.cadastrar_restaurante(restaurante.model_dump())
     if "erro" in resultado:
         raise HTTPException(status_code=resultado["status_code"], detail=resultado["erro"])
     return resultado
 
-@router.get("/", status_code=200)
+@router.get("/restaurantes", status_code=200)
 async def listar_restaurantes(
     nome: Optional[str] = None, 
     endereco: Optional[str] = None, 
@@ -56,7 +56,7 @@ async def listar_restaurantes(
         raise HTTPException(status_code=resultado["status_code"], detail=resultado["erro"])
     return resultado["restaurantes"]
 
-@router.put("/{restaurante_id}")
+@router.put("/restaurantes/atualizar/{restaurante_id}")
 async def atualizar_restaurante(restaurante_id: int, dados: RestauranteUpdate):
     # Remove campos nulos para não sobrescrever com None
     dados_atualizacao = {k: v for k, v in dados.model_dump().items() if v is not None}
@@ -66,7 +66,7 @@ async def atualizar_restaurante(restaurante_id: int, dados: RestauranteUpdate):
     return resultado
 
 # Rota para gerenciar pedidos (Notificação)
-@router.post("/pedidos/decisao")
+@router.post("/pedidos/{acao.id_pedido}/decisao")
 async def gerenciar_pedido(acao: PedidoAcao):
     resultado = RestauranteControle.gerenciar_pedido(
         acao.id_pedido, 
@@ -78,7 +78,7 @@ async def gerenciar_pedido(acao: PedidoAcao):
     return resultado
 
 # Rota para trigger manual de atualização de status (simulando o automático do BDD)
-@router.post("/sincronizar-horarios")
+@router.post("/restaurantes/status")
 async def sincronizar_horarios():
     RestauranteControle.verificar_horarios_e_atualizar_status()
     return {"mensagem": "Horários sincronizados com sucesso"}
