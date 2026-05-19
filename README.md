@@ -7,9 +7,16 @@ O objetivo desta base é permitir que o time comece a desenvolver rapidamente co
 
 ## Estrutura do projeto
 - `service/backend/`: código do backend Django
-- `app/frontend/`: esqueleto inicial do frontend Vite + React
+- `app/frontend/`: frontend Vite + React (lista funcional de entregadores)
 - `docker-compose.yml`: orquestra o backend Django e PostgreSQL
 - `.env.example`: variáveis de ambiente para desenvolvimento
+- `docs/`: source of truth de arquitetura, design system e BDD
+
+## Documentação oficial
+- `docs/architecture.md`
+- `docs/design-system.md`
+- `docs/bdd-guidelines.md`
+- `docs/deliverers.md`
 
 ## Como rodar localmente
 1. Copie as variáveis de ambiente:
@@ -23,10 +30,11 @@ O objetivo desta base é permitir que o time comece a desenvolver rapidamente co
 3. A API estará disponível em `http://localhost:8000`
 
 ### Endpoints de exemplo
+- `GET /api/deliverers/?status=AVAILABLE&region=Zona Sul`
 - `POST /api/deliverers/`
 - `PATCH /api/deliverers/{deliverer_id}/status/`
-- `POST /api/orders/assign/`
-- `POST /api/orders/{order_id}/reassign/`
+- `POST /api/orders/assign/` (automática ou manual com `deliverer_id`)
+- `POST /api/orders/{order_id}/reassign/` (com `reason`: `timeout` ou `refused`)
 
 ### Frontend local
 O frontend inicial está em `app/frontend`.
@@ -47,7 +55,7 @@ pytest
 1. Crie um novo domínio dentro de `service/backend/delivery/domain/` ou extraia um app para `service/backend/<feature>`.
 2. Adicione portos (`ports.py`) e implementação de repositórios em `infrastructure/repositories.py`.
 3. Crie regras de aplicação em `application/services.py`.
-4. Exponha a API em `http/controllers.py` e registre as rotas em `http/urls.py`.
+4. Exponha a API em `http/views.py` e registre as rotas em `http/urls.py`.
 5. Adicione cenários BDD em `service/backend/tests/features/` e passos em `service/backend/tests/steps/`.
 
 ## Boas práticas de colaboração

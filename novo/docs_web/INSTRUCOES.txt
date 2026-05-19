@@ -1,0 +1,8 @@
+ATENÇÃO!
+
+-   A documentação das rotas da API podem ser visualizadas por meio do arquivo 'index.html', basta abri-lo no navegador.
+
+-   Para incluir a documentação das suas rotas basta inclui-los no arquivo 'api_docs.js'.
+    O arquivo é basicamente um json bem simples e prático de preencher.
+    Preste atenção à abertura e fechamento de chaves "{}" e às vírgulas para não quebrar o html.
+    

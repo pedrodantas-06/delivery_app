@@ -1,0 +1,54 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from core.config import settings
+from modulos.restaurante.rotas import router as restaurante_router
+from modulos.restaurante.controle import RestauranteControle
+import logging
+from apscheduler.schedulers.background import BackgroundScheduler
+
+# Configuração de logs
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+)
+
+# Configuração de CORS para segurança
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Em produção, especificar as origens permitidas
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Agendador global
+scheduler = BackgroundScheduler()
+
+# Inclusão das rotas modulares
+app.include_router(restaurante_router, prefix=settings.API_V1_STR)
+
+@app.get("/")
+async def root():
+    return {
+        "message": "Bem-vindo à API do Yummicious",
+        "docs": "/docs",
+        "version": "1.0.0"
+    }
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Iniciando a aplicação...")
+    restaurante_router
+    scheduler.add_job(RestauranteControle.verificar_horarios_e_atualizar_status, 'interval', seconds=60)
+    scheduler.start()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("Encerrando a aplicação...")
+    scheduler.shutdown()
