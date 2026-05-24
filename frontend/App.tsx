@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import Badge from './src/componentes/Badge'
 import Button from './src/componentes/Button'
 import Card from './src/componentes/Card'
@@ -22,6 +22,9 @@ function App() {
   const [filter, setFilter] = useState<'ALL' | DelivererStatus>('ALL')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [region, setRegion] = useState('')
 
   const fetchDeliverers = useCallback(async () => {
     setLoading(true)
@@ -74,11 +77,67 @@ function App() {
     }
   }, [fetchDeliverers])
 
+  const registerDeliverer = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setError('')
+
+    try {
+      const response = await fetch('/api/deliverers/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, phone, region }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Nao foi possivel cadastrar entregador')
+      }
+
+      setName('')
+      setPhone('')
+      setRegion('')
+      await fetchDeliverers()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erro inesperado'
+      setError(message)
+    }
+  }, [fetchDeliverers, name, phone, region])
+
   return (
     <main className="page">
       <section className="header">
         <h1 className="title">Gestao de Entregadores</h1>
         <p className="subtitle">Acompanhe disponibilidade e acione entregadores rapidamente.</p>
+      </section>
+
+      <section className="content">
+        <Card>
+          <form data-cy="register-deliverer" onSubmit={registerDeliverer}>
+            <h2>Cadastrar entregador</h2>
+            <input
+              data-cy="deliverer-name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Nome"
+            />
+            <input
+              data-cy="deliverer-phone"
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              placeholder="Telefone"
+            />
+            <input
+              data-cy="deliverer-region"
+              value={region}
+              onChange={(event) => setRegion(event.target.value)}
+              placeholder="Regiao"
+            />
+            <Button data-cy="submit-deliverer" type="submit">
+              Cadastrar
+            </Button>
+          </form>
+        </Card>
       </section>
 
       <section className="toolbar">
