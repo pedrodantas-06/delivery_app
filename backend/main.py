@@ -1,10 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
-from modulos.restaurante.rotas import router as restaurante_router
-from modulos.restaurante.controle import RestauranteControle
+from modulos.delivery.http.api import router as deliverers_router
 import logging
 from apscheduler.schedulers.background import BackgroundScheduler
+
+try:
+    from modulos.restaurante.rotas import router as restaurante_router
+    from modulos.restaurante.controle import RestauranteControle
+except ModuleNotFoundError:
+    restaurante_router = None
+    RestauranteControle = None
 
 # Configuração de logs
 logging.basicConfig(
@@ -31,7 +37,9 @@ app.add_middleware(
 scheduler = BackgroundScheduler()
 
 # Inclusão das rotas modulares
-app.include_router(restaurante_router, prefix=settings.API_V1_STR)
+app.include_router(deliverers_router, prefix='/api')
+if restaurante_router is not None:
+    app.include_router(restaurante_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():
@@ -44,9 +52,9 @@ async def root():
 @app.on_event("startup")
 async def startup_event():
     logger.info("Iniciando a aplicação...")
-    restaurante_router
-    scheduler.add_job(RestauranteControle.verificar_horarios_e_atualizar_status, 'interval', seconds=60)
-    scheduler.start()
+    if RestauranteControle is not None:
+        scheduler.add_job(RestauranteControle.verificar_horarios_e_atualizar_status, 'interval', seconds=60)
+        scheduler.start()
 
 @app.on_event("shutdown")
 async def shutdown_event():
