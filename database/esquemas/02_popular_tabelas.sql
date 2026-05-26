@@ -1,19 +1,28 @@
 SET NAMES utf8mb4;
 
+USE yummicious_db;
+
 -- RESTAURANTES
-INSERT INTO restaurantes (nome, endereco, cnpj, horario, tipo, status) VALUES
-('Restaurante Central', 'Rua do Hospício, 123', '12.345.678/0001-99', '10:00-22:00', 'Buffet', 'Fechado'),
-('Gosto Bom', 'Rua Paralela, 321', '11.222.333/0001-80', '17:00-02:00', 'Marmita', 'Fechado'),
-('Pizzaria Massa Pura', 'Avenida Central, 456', '22.333.444/0001-90', '18:00-23:30', 'Pizzaria', 'Fechado'),
-('BurguerZaço', 'Rua das Flores, 789', '33.444.555/0001-00', '18:30-04:00', 'Hamburgueria', 'Fechado'),
-('Cantina Bella Italia', 'Alameda dos Anjos, 101', '44.555.666/0001-11', '09:00-12:30', 'Italiana', 'Fechado');
+INSERT INTO restaurantes (id, nome, endereco, cnpj, horario, tipo, status) VALUES
+(1, 'Restaurante Teste', 'Rua Teste, 123', '00.000.000/0001-00', '10:00-22:00', 'Teste', 'Aberto')
+ON DUPLICATE KEY UPDATE nome = VALUES(nome);
 
--- CARDAPIO
+-- CLIENTES
+INSERT INTO clientes (id, nome, email, saldo) VALUES 
+('cli_123', 'Ana Vitória', 'ana@email.com', 0.00)
+ON DUPLICATE KEY UPDATE nome = VALUES(nome);
 
--- CLIENTE
+-- PEDIDOS
+INSERT INTO pedidos (id, id_restaurante, status, cliente_id, valor_total) VALUES
+(123, 1, 'Pago', 'cli_123', 100.00)
+ON DUPLICATE KEY UPDATE status = VALUES(status);
 
--- ENTREGADOR
+-- MÉTODOS DE PAGAMENTO (opcional)
+INSERT INTO metodos_pagamento (cliente_id, tipo, ultimos_4_digitos, nome_titular, validade_mes, validade_ano) VALUES
+('cli_123', 'CREDIT_CARD', '1111', 'ANA VITORIA', 12, 2028)
+ON DUPLICATE KEY UPDATE tipo = VALUES(tipo);
 
--- PAGAMENTO
-
--- PEDIDO
+-- Mostrar resultado
+SELECT 'Banco recriado com sucesso!' as Status;
+SELECT * FROM clientes;
+SELECT * FROM pedidos;

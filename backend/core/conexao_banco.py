@@ -1,5 +1,6 @@
+import mysql.connector
+import os
 from mysql.connector import pooling, Error
-from backend.core.config import settings
 import logging
 
 # Configuração de log
@@ -18,11 +19,11 @@ class ConexaoBanco:
                     pool_name="delivery_pool",
                     pool_size=10,
                     pool_reset_session=True,
-                    host=settings.DB_HOST,
-                    port=settings.DB_PORT,
-                    database=settings.DB_NAME,
-                    user=settings.DB_USER,
-                    password=settings.DB_PASSWORD,
+                    host=os.getenv("DB_HOST"),
+                    port=os.getenv("DB_PORT"),
+                    database=os.getenv("DB_NAME"),
+                    user=os.getenv("DB_USER"),
+                    password=os.getenv("DB_PASSWORD"),
                     charset="utf8mb4",
                     init_command="SET NAMES utf8mb4"
                 )
