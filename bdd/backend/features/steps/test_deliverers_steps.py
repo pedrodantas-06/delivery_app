@@ -22,11 +22,11 @@ def client() -> TestClient:
     return TestClient(app)
 
 
-# @pytest.fixture
-# def context() -> dict:
-#     return {
-#         'deliverers_by_name': {},
-#     }
+@pytest.fixture
+def context() -> dict:
+    return {
+        'deliverers_by_name': {},
+    }
 
 
 @given('nenhum entregador existe')

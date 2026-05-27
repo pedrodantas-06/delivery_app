@@ -1,9 +1,9 @@
 from behave import given, when, then
 import requests
 import mysql.connector
-#from backend.core.config import settings
+from backend.core.config import settings
 from datetime import datetime
-#from backend.core.conexao_banco import ConexaoBanco
+from backend.core.conexao_banco import ConexaoBanco
 
 BASE_URL = f"http://localhost:8000{settings.API_V1_STR}"
 
