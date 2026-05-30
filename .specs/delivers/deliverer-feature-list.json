@@ -1,0 +1,13 @@
+{
+  "features": [
+    { "id": "F1", "title": "Registrar entregador", "priority": "high" },
+    { "id": "F2", "title": "Atualizar disponibilidade do entregador", "priority": "high" },
+    { "id": "F3", "title": "Listar entregadores por região/status", "priority": "medium" },
+    { "id": "F4", "title": "Atribuição automática de delivery por região", "priority": "high" },
+    { "id": "F5", "title": "Aceitar entrega (race) / accept endpoint", "priority": "high" },
+    { "id": "F6", "title": "Coletar pedido (pickup)", "priority": "high" },
+    { "id": "F7", "title": "Confirmar entrega (deliver)", "priority": "high" },
+    { "id": "F8", "title": "Reatribuir entrega (reassign)", "priority": "medium" },
+    { "id": "F9", "title": "Histórico de entregas do entregador", "priority": "low" }
+  ]
+}
