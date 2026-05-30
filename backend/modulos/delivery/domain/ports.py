@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from uuid import UUID
 
-from .entities import Deliverer, Order
+from .entities import Deliverer, Delivery
 
 
 class DelivererRepository(ABC):
@@ -25,9 +25,16 @@ class DelivererRepository(ABC):
 
 class OrderRepository(ABC):
     @abstractmethod
-    def save(self, order: Order) -> Order:
+    def save(self, order: Delivery) -> Delivery:
         pass
 
     @abstractmethod
-    def get_by_id(self, order_id: UUID) -> Optional[Order]:
+    def get_by_id(self, order_id: UUID) -> Optional[Delivery]:
         pass
+    
+    # optional: record assignment/audit
+    def record_assignment(self, delivery_id: str, deliverer_id: Optional[str], assigned_by: Optional[str], reason: Optional[str]):
+        raise NotImplementedError()
+    
+    def list_orders(self, region: Optional[str] = None) -> list[Delivery]:
+        raise NotImplementedError()
