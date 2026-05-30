@@ -1,4 +1,4 @@
-type BadgeStatus = 'AVAILABLE' | 'OCCUPIED' | 'OFFLINE'
+type BadgeStatus = 'AVAILABLE' | 'BUSY' | 'OCCUPIED' | 'OFFLINE'
 
 type BadgeProps = {
   status: BadgeStatus
