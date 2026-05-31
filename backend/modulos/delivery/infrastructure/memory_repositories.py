@@ -1,8 +1,8 @@
 from typing import Optional
 from uuid import UUID
 
-from modulos.delivery.domain.entities import Deliverer, Order
-from modulos.delivery.domain.enums import DelivererStatus
+from modulos.delivery.domain.entities import Deliverer, Delivery
+from modulos.delivery.domain.enums import DelivererStatus, DeliveryStatus
 from modulos.delivery.domain.ports import DelivererRepository, OrderRepository
 
 
@@ -41,14 +41,14 @@ class InMemoryDelivererRepository(DelivererRepository):
 
 class InMemoryOrderRepository(OrderRepository):
     def __init__(self):
-        self._orders: dict[UUID, Order] = {}
+        self._orders: dict[UUID, Delivery] = {}
 
     def clear(self) -> None:
         self._orders.clear()
 
-    def save(self, order: Order) -> Order:
+    def save(self, order: Delivery) -> Delivery:
         self._orders[order.id] = order
         return order
 
-    def get_by_id(self, order_id: UUID) -> Optional[Order]:
+    def get_by_id(self, order_id: UUID) -> Optional[Delivery]:
         return self._orders.get(order_id)

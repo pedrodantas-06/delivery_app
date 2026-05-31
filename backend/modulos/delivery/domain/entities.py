@@ -3,7 +3,7 @@ from typing import Optional
 from uuid import UUID
 from datetime import datetime
 
-from .enums import DelivererStatus, OrderStatus
+from .enums import DelivererStatus, DeliveryStatus
 
 
 @dataclass(frozen=True)
@@ -17,8 +17,19 @@ class Deliverer:
 
 
 @dataclass(frozen=True)
-class Order:
+class Delivery:
     id: UUID
+    order_id: UUID
     region: str
-    status: OrderStatus
-    assigned_deliverer_id: Optional[UUID] = None
+    status: DeliveryStatus
+    restaurant_id: Optional[UUID] = None
+    customer_id: Optional[UUID] = None
+    deliverer_id: Optional[UUID] = None
+    assigned_at: Optional[datetime] = None
+    picked_up_at: Optional[datetime] = None
+    delivered_at: Optional[datetime] = None
+    metadata: Optional[dict] = None
+
+
+# Compatibility alias for existing code paths.
+Order = Delivery

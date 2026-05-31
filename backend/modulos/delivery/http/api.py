@@ -1,4 +1,4 @@
-from uuid import UUID
+from uuid import UUID, uuid5, NAMESPACE_URL
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -21,13 +21,28 @@ class DelivererStatusUpdate(BaseModel):
 
 
 class AssignOrderRequest(BaseModel):
-    order_id: UUID
+    order_id: str
     region: str
-    deliverer_id: UUID | None = None
+    deliverer_id: str | None = None
 
 
 class ReassignOrderRequest(BaseModel):
     reason: str = 'timeout'
+
+
+class AcceptRequest(BaseModel):
+    deliverer_id: str
+
+
+class DeliverActionRequest(BaseModel):
+    deliverer_id: str
+
+
+def normalize_uuid(value: str) -> UUID:
+    try:
+        return UUID(str(value))
+    except ValueError:
+        return uuid5(NAMESPACE_URL, value)
 
 
 @router.get('/deliverers/')
@@ -72,26 +87,90 @@ def update_deliverer_status(deliverer_id: UUID, payload: DelivererStatusUpdate):
 @router.post('/orders/assign/')
 def assign_order(payload: AssignOrderRequest):
     try:
-        order = deliverer_service.assign_deliverer(payload.order_id, payload.region, payload.deliverer_id)
+        order = deliverer_service.assign_deliverer(
+            normalize_uuid(payload.order_id),
+            payload.region,
+            normalize_uuid(payload.deliverer_id) if payload.deliverer_id else None,
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return {
         'order_id': str(order.id),
         'status': order.status.value,
-        'assigned_deliverer_id': str(order.assigned_deliverer_id) if order.assigned_deliverer_id else None,
+        'deliverer_id': str(order.deliverer_id) if order.deliverer_id else None,
+        'assigned_deliverer_id': str(order.deliverer_id) if order.deliverer_id else None,
+    }
+
+
+@router.get('/orders/')
+def list_orders(region: str | None = None):
+    orders = deliverer_service.order_repo.list_orders(region=region) if hasattr(deliverer_service.order_repo, 'list_orders') else []
+    return {
+        'items': [
+            {
+                'order_id': str(o.id),
+                'region': o.region,
+                'status': o.status.value,
+                'assigned_deliverer_id': str(o.assigned_deliverer_id) if o.assigned_deliverer_id else None,
+            }
+            for o in orders
+        ]
     }
 
 
 @router.post('/orders/{order_id}/reassign/')
-def reassign_order(order_id: UUID, payload: ReassignOrderRequest):
+def reassign_order(order_id: str, payload: ReassignOrderRequest):
     try:
-        order = deliverer_service.reassign_deliverer(order_id, reason=payload.reason)
+        order = deliverer_service.reassign_deliverer(normalize_uuid(order_id), reason=payload.reason)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return {
         'order_id': str(order.id),
         'status': order.status.value,
-        'assigned_deliverer_id': str(order.assigned_deliverer_id) if order.assigned_deliverer_id else None,
+        'deliverer_id': str(order.deliverer_id) if order.deliverer_id else None,
+        'assigned_deliverer_id': str(order.deliverer_id) if order.deliverer_id else None,
+    }
+
+
+@router.post('/orders/{order_id}/accept/')
+def accept_order(order_id: str, payload: AcceptRequest):
+    try:
+        order = deliverer_service.accept_delivery(normalize_uuid(order_id), normalize_uuid(payload.deliverer_id))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {
+        'order_id': str(order.id),
+        'status': order.status.value,
+        'deliverer_id': str(order.deliverer_id) if order.deliverer_id else None,
+        'assigned_deliverer_id': str(order.deliverer_id) if order.deliverer_id else None,
+    }
+
+
+@router.patch('/orders/{order_id}/pickup/')
+def pickup_order(order_id: str, payload: DeliverActionRequest):
+    try:
+        order = deliverer_service.pickup_delivery(normalize_uuid(order_id), normalize_uuid(payload.deliverer_id))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {
+        'order_id': str(order.id),
+        'status': order.status.value,
+        'picked_up_at': getattr(order, 'picked_up_at', None),
+        'deliverer_id': str(order.deliverer_id) if order.deliverer_id else None,
+    }
+
+
+@router.patch('/orders/{order_id}/deliver/')
+def deliver_order(order_id: str, payload: DeliverActionRequest):
+    try:
+        order = deliverer_service.deliver_delivery(normalize_uuid(order_id), normalize_uuid(payload.deliverer_id))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {
+        'order_id': str(order.id),
+        'status': order.status.value,
+        'delivered_at': getattr(order, 'delivered_at', None),
+        'deliverer_id': str(order.deliverer_id) if order.deliverer_id else None,
     }
