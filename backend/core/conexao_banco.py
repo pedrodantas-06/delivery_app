@@ -1,5 +1,5 @@
 from mysql.connector import pooling, Error
-from backend.core.config import settings
+from core.config import settings
 import logging
 
 # Configuração de log
