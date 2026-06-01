@@ -1,25 +1,17 @@
-import logging
-
-from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from core.config import settings
 from modulos.delivery.http.api import router as deliverers_router
+import logging
+from apscheduler.schedulers.background import BackgroundScheduler
+from modulos.cardapio.rotas import router as cardapio_router
+
 
 try:
     from modulos.restaurante.rotas import router as restaurante_router
-except ModuleNotFoundError:
-    restaurante_router = None
-
-try:
-    from modulos.pagamento.rotas import router as pagamento_router
-except ModuleNotFoundError:
-    pagamento_router = None
-
-try:
     from modulos.restaurante.controle import RestauranteControle
 except ModuleNotFoundError:
+    restaurante_router = None
     RestauranteControle = None
 
 # Configuração de logs
@@ -47,11 +39,10 @@ app.add_middleware(
 scheduler = BackgroundScheduler()
 
 # Inclusão das rotas modulares
+app.include_router(deliverers_router, prefix='/api')
+app.include_router(cardapio_router, prefix=settings.API_V1_STR)
 if restaurante_router is not None:
     app.include_router(restaurante_router, prefix=settings.API_V1_STR)
-if pagamento_router is not None:
-    app.include_router(pagamento_router, prefix=settings.API_V1_STR)
-app.include_router(deliverers_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():
