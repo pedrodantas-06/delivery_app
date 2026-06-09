@@ -2,7 +2,9 @@ from core.conexao_banco import ConexaoBanco
 import mysql.connector
 from datetime import datetime
 import logging
+from uuid import uuid5, NAMESPACE_URL
 
+from modulos.delivery.wires import deliverer_service
 from modulos.pagamento.mock_gateway import MockPaymentGateway
 
 logger = logging.getLogger(__name__)
@@ -47,6 +49,12 @@ class PagamentoControle:
             """, (pedido_id,))
 
             conn.commit()
+
+            order_uuid = uuid5(NAMESPACE_URL, str(pedido_id))
+            try:
+                deliverer_service.assign_deliverer(order_uuid, "Zona Sul", None)
+            except ValueError:
+                pass  # no deliverer available — pedido stays Pago
 
             return {
                 "pedido_id": pedido_id,
