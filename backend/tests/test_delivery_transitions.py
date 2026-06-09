@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from fastapi.testclient import TestClient
 
-from backend.main import app
+from main import app
 from modulos.delivery.wires import reset_delivery_state
 
 

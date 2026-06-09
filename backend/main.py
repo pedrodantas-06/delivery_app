@@ -41,7 +41,7 @@ app.add_middleware(
 scheduler = BackgroundScheduler()
 
 # Inclusão das rotas modulares
-app.include_router(deliverers_router, prefix='/api')
+app.include_router(deliverers_router, prefix=settings.API_V1_STR)
 app.include_router(cardapio_router, prefix=settings.API_V1_STR)
 app.include_router(cliente_router, prefix=settings.API_V1_STR)
 app.include_router(auth_router, prefix=settings.API_V1_STR)
