@@ -7,6 +7,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from modulos.cardapio.rotas import router as cardapio_router
 from modulos.cliente.rotas import router as cliente_router
 from modulos.auth.rotas import router as auth_router
+from modulos.pagamento.rotas import router as pagamento_router
 
 
 try:
@@ -45,6 +46,7 @@ app.include_router(deliverers_router, prefix=settings.API_V1_STR)
 app.include_router(cardapio_router, prefix=settings.API_V1_STR)
 app.include_router(cliente_router, prefix=settings.API_V1_STR)
 app.include_router(auth_router, prefix=settings.API_V1_STR)
+app.include_router(pagamento_router, prefix=settings.API_V1_STR)
 if restaurante_router is not None:
     app.include_router(restaurante_router, prefix=settings.API_V1_STR)
 

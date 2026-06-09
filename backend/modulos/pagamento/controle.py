@@ -2,12 +2,67 @@ from core.conexao_banco import ConexaoBanco
 import mysql.connector
 from datetime import datetime
 import logging
-import hashlib
+
+from modulos.pagamento.mock_gateway import MockPaymentGateway
 
 logger = logging.getLogger(__name__)
 
 class PagamentoControle:
-    
+
+    @staticmethod
+    async def processar_pagamento(pedido_id: int):
+        conn = ConexaoBanco.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                SELECT id, status, valor_total
+                FROM pedidos
+                WHERE id = %s
+            """, (pedido_id,))
+            pedido = cursor.fetchone()
+
+            if not pedido:
+                return {"erro": "Pedido não encontrado", "status_code": 404}
+
+            if pedido["status"] != "Pendente":
+                return {"erro": "Pedido não está pendente", "status_code": 400}
+
+            resultado_gateway = await MockPaymentGateway.processar(
+                float(pedido["valor_total"])
+            )
+
+            cursor.execute("""
+                INSERT INTO transacoes (pedido_id, tipo, valor, status)
+                VALUES (%s, %s, %s, %s)
+            """, (
+                pedido_id,
+                "PAGAMENTO",
+                pedido["valor_total"],
+                "PROCESSADO",
+            ))
+
+            cursor.execute("""
+                UPDATE pedidos SET status = 'Pago'
+                WHERE id = %s
+            """, (pedido_id,))
+
+            conn.commit()
+
+            return {
+                "pedido_id": pedido_id,
+                "status": "Pago",
+                "transaction_id": resultado_gateway["transaction_id"],
+                "status_code": 200,
+            }
+
+        except mysql.connector.Error as err:
+            logger.error(f"Erro no banco: {err}")
+            conn.rollback()
+            return {"erro": "Erro interno ao processar pagamento", "status_code": 500}
+        finally:
+            cursor.close()
+            conn.close()
+
     @staticmethod
     def processar_estorno(pedido_id: int):
         conn = ConexaoBanco.get_connection()
