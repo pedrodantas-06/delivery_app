@@ -80,6 +80,22 @@ class PedidoControle:
             conn.close()
 
     @staticmethod
+    def listar_todos():
+        conn = ConexaoBanco.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM pedidos ORDER BY id DESC")
+            pedidos = cursor.fetchall()
+            return {"pedidos": pedidos, "status_code": 200}
+
+        except mysql.connector.Error as err:
+            logger.error(f"Erro no banco de dados: {err}")
+            return {"erro": "Erro interno ao listar pedidos", "status_code": 500}
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
     def listar_por_restaurante(restaurante_id: int):
         conn = ConexaoBanco.get_connection()
         cursor = conn.cursor(dictionary=True)
