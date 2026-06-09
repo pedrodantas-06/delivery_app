@@ -1,7 +1,12 @@
 import type { Delivery, DelivererSession } from '../types'
 
 export function getActiveDelivery(deliveries: Delivery[], sessionId?: string | null) {
-  return deliveries.find((delivery) => delivery.delivererId === sessionId || delivery.assignedDelivererId === sessionId) ?? null
+  return deliveries.find(
+    (delivery) =>
+      (delivery.delivererId === sessionId || delivery.assignedDelivererId === sessionId) &&
+      delivery.status !== 'DELIVERED' &&
+      delivery.status !== 'CANCELLED',
+  ) ?? null
 }
 
 export function getDeliveryHistory(deliveries: Delivery[], sessionId?: string | null) {

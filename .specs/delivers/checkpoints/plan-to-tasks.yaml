@@ -1,0 +1,23 @@
+tasks:
+  - taskId: T001
+    planItem: 1.1
+  - taskId: T002
+    planItem: 1.1
+  - taskId: T003
+    planItem: 1.2
+  - taskId: T004
+    planItem: 1.2
+  - taskId: T005
+    planItem: 1.3
+  - taskId: T006
+    planItem: 1.3
+  - taskId: T007
+    planItem: 1.3
+  - taskId: T008
+    planItem: 1.3
+  - taskId: T009
+    planItem: 2.1
+  - taskId: T010
+    planItem: 2.1
+  - taskId: T011
+    planItem: 2.2

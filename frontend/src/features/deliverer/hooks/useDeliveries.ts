@@ -10,6 +10,7 @@ export function useDeliveries(region: string) {
   const [deliveries, setDeliveries] = useState<Delivery[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [refreshedAt, setRefreshedAt] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
     setLoading(true)
@@ -21,6 +22,7 @@ export function useDeliveries(region: string) {
       ])
       setDeliverers(nextDeliverers)
       setDeliveries(nextDeliveries)
+      setRefreshedAt(new Date().toISOString())
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Erro inesperado')
     } finally {
@@ -42,6 +44,7 @@ export function useDeliveries(region: string) {
     availableDeliveries,
     loading,
     error,
+    refreshedAt,
     refresh,
     assign: assignDelivery,
     accept: acceptDelivery,

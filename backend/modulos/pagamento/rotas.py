@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 from modulos.pagamento.controle import PagamentoControle
 
-router = APIRouter(prefix="", tags=["Pagamento"])
+router = APIRouter(prefix="/pagamento", tags=["Pagamento"])
 
 class MetodoPagamentoCreate(BaseModel):
     tipo: str
@@ -17,14 +17,26 @@ class MetodoPagamentoUpdate(BaseModel):
     validade_mes: Optional[int] = None
     validade_ano: Optional[int] = None
 
-@router.post("/api/pagamento/estornar/{pedido_id}")
+@router.post("/processar/{pedido_id}")
+async def processar_pagamento(pedido_id: int):
+    resultado = await PagamentoControle.processar_pagamento(pedido_id)
+    if "erro" in resultado:
+        raise HTTPException(status_code=resultado["status_code"], detail=resultado["erro"])
+    return {
+        "pedido_id": resultado["pedido_id"],
+        "status": resultado["status"],
+        "transaction_id": resultado["transaction_id"],
+    }
+
+
+@router.post("/estornar/{pedido_id}")
 async def estornar_pedido(pedido_id: int):
     resultado = PagamentoControle.processar_estorno(pedido_id)
     if "erro" in resultado:
         raise HTTPException(status_code=resultado["status_code"], detail=resultado["erro"])
     return resultado
 
-@router.post("/api/pagamento/metodos", status_code=201)
+@router.post("/metodos", status_code=201)
 async def criar_metodo_pagamento(
     cliente_id: str,
     metodo: MetodoPagamentoCreate
@@ -34,7 +46,7 @@ async def criar_metodo_pagamento(
         raise HTTPException(status_code=resultado["status_code"], detail=resultado["erro"])
     return resultado
 
-@router.put("/api/pagamento/metodos/{metodo_id}")
+@router.put("/metodos/{metodo_id}")
 async def atualizar_metodo_pagamento(
     metodo_id: int,
     cliente_id: str,
@@ -46,7 +58,7 @@ async def atualizar_metodo_pagamento(
         raise HTTPException(status_code=resultado["status_code"], detail=resultado["erro"])
     return resultado
 
-@router.delete("/api/pagamento/metodos/{metodo_id}", status_code=204)
+@router.delete("/metodos/{metodo_id}", status_code=204)
 async def remover_metodo_pagamento(
     metodo_id: int,
     cliente_id: str

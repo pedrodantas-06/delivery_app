@@ -1,26 +1,42 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../app/providers/AuthProvider'
+import AppShell from '../../../shared/components/AppShell'
+import Loading from '../../../shared/components/Loading'
 import DelivererHeader from '../components/DelivererHeader'
 import ActiveDeliveryPage from '../pages/ActiveDeliveryPage'
 import DashboardPage from '../pages/DashboardPage'
 import HistoryPage from '../pages/HistoryPage'
-import LoginPage from '../pages/LoginPage'
 import ProfilePage from '../pages/ProfilePage'
 import { useActiveDelivery } from '../hooks/useActiveDelivery'
 import { useDeliverer } from '../hooks/useDeliverer'
 import { useDeliveries } from '../hooks/useDeliveries'
 import { useDeliveryHistory } from '../hooks/useDeliveryHistory'
 import { DEFAULT_REGION } from '../constants'
+import { saveSession } from '../services/delivererService'
 import type { DelivererTab } from '../types'
 
-
 function DelivererRoutes() {
-  const { session, error, login, logout, changeStatus } = useDeliverer()
+  const { user, logout: authLogout } = useAuth()
+  const navigate = useNavigate()
+  const { session, logout: delivererLogout, changeStatus, setSession } = useDeliverer()
   const [tab, setTab] = useState<DelivererTab>('dashboard')
   const [region, setRegion] = useState(DEFAULT_REGION)
-  const [loginForm, setLoginForm] = useState({ name: 'Ana', phone: '11999999999', region: DEFAULT_REGION })
-  const { deliverers, deliveries, loading, refresh, assign, accept, pickup, deliver } = useDeliveries(region)
+  const { deliverers, deliveries, loading, refreshedAt, refresh, assign, accept, pickup, deliver } = useDeliveries(region)
   const activeDelivery = useActiveDelivery(deliveries, session?.id)
   const history = useDeliveryHistory(deliveries, session?.id)
+
+  useEffect(() => {
+    if (!user?.referencia_id) return
+    const nextSession = {
+      id: user.referencia_id,
+      name: user.nome,
+      phone: '',
+      region: DEFAULT_REGION,
+    }
+    setSession(nextSession)
+    saveSession(nextSession)
+  }, [user, setSession])
 
   const header = useMemo(() => {
     if (!session) {
@@ -40,24 +56,18 @@ function DelivererRoutes() {
     )
   }, [region, session, tab])
 
+  const handleLogout = () => {
+    delivererLogout()
+    authLogout()
+    navigate('/login')
+  }
+
   if (!session) {
-    return (
-      <LoginPage
-        form={loginForm}
-        error={error}
-        onChange={setLoginForm}
-        onSubmit={async () => {
-          const nextSession = await login(loginForm)
-          setRegion(nextSession.region)
-          setTab('dashboard')
-          await refresh()
-        }}
-      />
-    )
+    return <Loading label="Carregando painel do entregador..." />
   }
 
   return (
-    <main className="page">
+    <AppShell>
       {header}
 
       {tab === 'dashboard' && (
@@ -65,6 +75,7 @@ function DelivererRoutes() {
           session={session}
           region={region}
           loading={loading}
+          refreshedAt={refreshedAt}
           deliveries={deliveries}
           deliverers={deliverers}
           onRefresh={refresh}
@@ -81,6 +92,10 @@ function DelivererRoutes() {
           onStatusChange={async (status) => {
             await changeStatus(status)
             await refresh()
+          }}
+          onAdvanceStatus={async () => {
+            await refresh()
+            setTab('active')
           }}
         />
       )}
@@ -102,6 +117,12 @@ function DelivererRoutes() {
             await refresh()
             setTab('history')
           }}
+          onAdvanced={async (completed) => {
+            await refresh()
+            if (completed) {
+              setTab('history')
+            }
+          }}
         />
       )}
 
@@ -110,11 +131,11 @@ function DelivererRoutes() {
       {tab === 'profile' && (
         <ProfilePage
           session={session}
-          onLogout={logout}
+          onLogout={handleLogout}
           onUseProfileRegion={() => setRegion(session.region)}
         />
       )}
-    </main>
+    </AppShell>
   )
 }
 

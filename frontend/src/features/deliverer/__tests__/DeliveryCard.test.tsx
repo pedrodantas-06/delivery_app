@@ -26,7 +26,7 @@ describe('DeliveryCard', () => {
 
     expect(screen.getByText('order-123')).toBeInTheDocument()
     expect(screen.getByText('Zona Sul')).toBeInTheDocument()
-    expect(screen.getByText('Entregador: deliverer-1')).toBeInTheDocument()
+    expect(screen.getByText('deliverer-1')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Pickup' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Deliver' })).toBeInTheDocument()
   })

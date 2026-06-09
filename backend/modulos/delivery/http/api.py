@@ -112,7 +112,7 @@ def list_orders(region: str | None = None):
                 'order_id': str(o.id),
                 'region': o.region,
                 'status': o.status.value,
-                'assigned_deliverer_id': str(o.assigned_deliverer_id) if o.assigned_deliverer_id else None,
+                'assigned_deliverer_id': str(o.deliverer_id) if o.deliverer_id else None,
             }
             for o in orders
         ]

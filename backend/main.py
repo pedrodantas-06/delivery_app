@@ -6,6 +6,10 @@ import logging
 from apscheduler.schedulers.background import BackgroundScheduler
 from modulos.cardapio.rotas import router as cardapio_router
 from modulos.cliente.rotas import router as cliente_router
+from modulos.auth.rotas import router as auth_router
+from modulos.pagamento.rotas import router as pagamento_router
+from modulos.pedido.rotas import router as pedido_router
+from modulos.admin.rotas import router as admin_router
 
 
 try:
@@ -40,9 +44,13 @@ app.add_middleware(
 scheduler = BackgroundScheduler()
 
 # Inclusão das rotas modulares
-app.include_router(deliverers_router, prefix='/api')
+app.include_router(deliverers_router, prefix=settings.API_V1_STR)
 app.include_router(cardapio_router, prefix=settings.API_V1_STR)
 app.include_router(cliente_router, prefix=settings.API_V1_STR)
+app.include_router(auth_router, prefix=settings.API_V1_STR)
+app.include_router(pagamento_router, prefix=settings.API_V1_STR)
+app.include_router(pedido_router, prefix=settings.API_V1_STR)
+app.include_router(admin_router, prefix=settings.API_V1_STR)
 if restaurante_router is not None:
     app.include_router(restaurante_router, prefix=settings.API_V1_STR)
 

@@ -66,11 +66,11 @@ async def atualizar_restaurante(restaurante_id: int, dados: RestauranteUpdate):
     return resultado
 
 # Rota para gerenciar pedidos (Notificação)
-@router.post("/pedidos/{acao.id_pedido}/decisao")
-async def gerenciar_pedido(acao: PedidoAcao):
+@router.post("/pedidos/{id_pedido}/decisao")
+async def gerenciar_pedido(id_pedido: int, acao: PedidoAcao):
     resultado = RestauranteControle.gerenciar_pedido(
-        acao.id_pedido, 
-        acao.id_restaurante, 
+        id_pedido,
+        acao.id_restaurante,
         acao.aceitacao
     )
     if "erro" in resultado:
