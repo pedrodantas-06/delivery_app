@@ -413,9 +413,72 @@ input {
 }
 
 .loading,
-.empty-state {
+.empty-state,
+.loading-state {
   margin: 0;
   color: var(--text-secondary);
+}
+
+.customer-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.customer-page {
+  flex: 1;
+  padding-bottom: 88px;
+}
+
+.customer-section {
+  display: grid;
+  gap: 16px;
+}
+
+.customer-menu-group {
+  display: grid;
+  gap: 12px;
+}
+
+.customer-menu-group h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.checkout-form {
+  display: grid;
+  gap: 14px;
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.92);
+  border-top: 1px solid var(--panel-border);
+  backdrop-filter: blur(14px);
+}
+
+.bottom-nav__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 14px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.bottom-nav__item--active {
+  background: rgba(255, 90, 31, 0.12);
+  color: var(--primary-hover);
 }
 
 @media (min-width: 768px) {
