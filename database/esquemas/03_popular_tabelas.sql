@@ -14,7 +14,7 @@ ON DUPLICATE KEY UPDATE nome = VALUES(nome);
 
 -- PEDIDOS
 INSERT INTO pedidos (id, id_restaurante, status, cliente_id, valor_total) VALUES
-(123, 1, 'Pago', 'cli_123', 100.00)
+(123, 1, 'Pendente', 'cli_123', 100.00)
 ON DUPLICATE KEY UPDATE status = VALUES(status);
 
 -- MÉTODOS DE PAGAMENTO (opcional)
