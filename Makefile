@@ -26,7 +26,7 @@ seed-deliverer:
 	cd backend && PYTHONPATH=. python3 scripts/seed_deliverer_demo.py
 
 test-backend:
-	cd backend && pytest
+	cd backend && PYTHONPATH=. pytest
 
 test-frontend:
 	npm test -- --runInBand
