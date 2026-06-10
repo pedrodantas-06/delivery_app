@@ -15,6 +15,7 @@ interface AuthContextValue {
   token: string | null
   login: (email: string, senha: string) => Promise<UserRole>
   logout: () => void
+  updateUser: (patch: Partial<AuthUser>) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -45,8 +46,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState({ user: null, token: null })
   }, [])
 
+  const updateUser = useCallback((patch: Partial<AuthUser>) => {
+    setState((prev: { user: AuthUser | null; token: string | null }) => {
+      if (!prev.user) return prev
+      const next = { ...prev, user: { ...prev.user, ...patch } }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+      return next
+    })
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ ...state, login, logout }}>
+    <AuthContext.Provider value={{ ...state, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   )

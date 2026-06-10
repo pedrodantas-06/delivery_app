@@ -410,6 +410,15 @@ input {
   width: 100%;
 }
 
+.btn--danger {
+  color: var(--danger);
+  border-color: rgba(220, 38, 38, 0.32);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.1);
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -438,6 +447,22 @@ input {
 
 .status-message--error {
   color: var(--error);
+}
+
+.status-message--success {
+  color: var(--success);
+}
+
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.auth-links a {
+  color: var(--text-secondary);
 }
 
 .loading,

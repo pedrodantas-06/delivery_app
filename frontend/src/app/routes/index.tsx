@@ -1,6 +1,9 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { RoleGuard } from '../guards/RoleGuard'
 import LoginPage from '../../features/auth/pages/LoginPage'
+import RegisterPage from '../../features/auth/pages/RegisterPage'
+import ForgotPasswordPage from '../../features/auth/pages/ForgotPasswordPage'
+import ResetPasswordPage from '../../features/auth/pages/ResetPasswordPage'
 import { CustomerRoutes } from '../../features/customer/routes/CustomerRoutes'
 import { RestaurantRoutes } from '../../features/restaurant/routes/RestaurantRoutes'
 import DelivererRoutes from '../../features/deliverer/routes/DelivererRoutes'
@@ -8,6 +11,9 @@ import { AdminRoutes } from '../../features/admin/routes/AdminRoutes'
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
+  { path: '/register', element: <RegisterPage /> },
+  { path: '/forgot-password', element: <ForgotPasswordPage /> },
+  { path: '/reset-password', element: <ResetPasswordPage /> },
   {
     path: '/customer/*',
     element: (
