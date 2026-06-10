@@ -19,6 +19,11 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
+    # Recuperação de senha
+    RESET_TOKEN_EXP_MIN: int = int(os.getenv("RESET_TOKEN_EXP_MIN", 30))
+    # Em desenvolvimento devolvemos o token na resposta (sem envio real de e-mail).
+    DEV_EXPOSE_RESET_TOKEN: bool = os.getenv("DEV_EXPOSE_RESET_TOKEN", "true").lower() == "true"
+
     # Configurações da API
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Yummicious"

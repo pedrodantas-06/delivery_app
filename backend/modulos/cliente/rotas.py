@@ -39,7 +39,7 @@ class ClienteLogin(BaseModel):
 # ==============================
 
 def require_admin(user: dict = Depends(get_current_user)):
-    if user.get("role") != "admin":
+    if user.get("role") != "ADMIN":
         raise HTTPException(status_code=403, detail="Acesso negado")
     return user
 
@@ -62,7 +62,7 @@ async def cadastrar_cliente(cliente: ClienteCreate):
     return resultado
 
 
-# Login
+# Login (delega para a autenticação unificada em `usuarios`)
 @router.post("/login")
 async def login_cliente(dados: ClienteLogin):
     resultado = service.login_cliente(dados.model_dump())
@@ -103,12 +103,12 @@ async def listar_clientes(
     return resultado.get("clientes", [])
 
 
-# Obter próprio usuário
+# Obter próprio perfil
 @router.get("/me", status_code=200)
 async def obter_meu_cliente(user: dict = Depends(get_current_user)):
-    cliente_id = int(user["sub"])
+    usuario_id = int(user["sub"])
 
-    resultado = service.listar_clientes({"id": cliente_id})
+    resultado = service.obter_perfil(usuario_id)
 
     if "erro" in resultado:
         raise HTTPException(
@@ -116,12 +116,23 @@ async def obter_meu_cliente(user: dict = Depends(get_current_user)):
             detail=resultado["erro"]
         )
 
-    clientes = resultado.get("clientes", [])
+    return resultado["cliente"]
 
-    if not clientes:
-        raise HTTPException(status_code=404, detail="Cliente não encontrado")
 
-    return clientes[0]
+# Estatísticas de pedidos do próprio cliente
+@router.get("/me/estatisticas", status_code=200)
+async def estatisticas_pedidos(user: dict = Depends(get_current_user)):
+    usuario_id = int(user["sub"])
+
+    resultado = service.estatisticas_pedidos(usuario_id)
+
+    if "erro" in resultado:
+        raise HTTPException(
+            status_code=resultado["status_code"],
+            detail=resultado["erro"]
+        )
+
+    return resultado
 
 
 # Atualizar cliente (admin OU dono)
@@ -131,7 +142,7 @@ async def atualizar_cliente(
     dados: ClienteUpdate,
     user: dict = Depends(get_current_user)
 ):
-    if user.get("role") != "admin" and str(cliente_id) != user["sub"]:
+    if user.get("role") != "ADMIN" and str(cliente_id) != user["sub"]:
         raise HTTPException(status_code=403, detail="Acesso negado")
 
     dados_atualizacao = {
@@ -154,13 +165,14 @@ async def atualizar_cliente(
 async def token_info(user: dict = Depends(get_current_user)):
     return user
 
+
 # Deletar cliente (admin OU dono)
 @router.delete("/{cliente_id}")
 async def deletar_cliente(
     cliente_id: int,
     user: dict = Depends(get_current_user)
 ):
-    if user.get("role") != "admin" and str(cliente_id) != user["sub"]:
+    if user.get("role") != "ADMIN" and str(cliente_id) != user["sub"]:
         raise HTTPException(status_code=403, detail="Acesso negado")
 
     resultado = service.deletar_cliente(cliente_id)

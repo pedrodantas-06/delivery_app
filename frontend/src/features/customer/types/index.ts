@@ -52,3 +52,27 @@ export interface CreateOrderResponse {
   valor_total: number
   mensagem: string
 }
+
+export interface CustomerProfile {
+  id: number
+  nome: string
+  email: string
+  role: string
+  referencia_id: string | null
+  cpf: string | null
+  telefone: string | null
+  saldo?: number
+}
+
+export interface UpdateProfilePayload {
+  nome?: string
+  email?: string
+  telefone?: string
+  senha?: string
+}
+
+export interface OrderStats {
+  total: number
+  no_mes: number
+  preco_medio: number
+}

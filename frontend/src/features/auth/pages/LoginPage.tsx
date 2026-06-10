@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth, type UserRole } from '../../../app/providers/AuthProvider'
 import Button from '../../../shared/components/Button'
 import Card from '../../../shared/components/Card'
@@ -25,6 +25,8 @@ function redirectByRole(role: UserRole, navigate: ReturnType<typeof useNavigate>
 function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const flashMessage = (location.state as { message?: string } | null)?.message
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [loading, setLoading] = useState(false)
@@ -54,6 +56,7 @@ function LoginPage() {
       </section>
 
       <Card className="panel panel--login">
+        {flashMessage && <p className="status-message status-message--success">{flashMessage}</p>}
         <form className="stack" onSubmit={handleSubmit}>
           <label className="field">
             <span>E-mail</span>
@@ -82,6 +85,14 @@ function LoginPage() {
           </Button>
         </form>
         {error && <p className="status-message status-message--error">{error}</p>}
+        <div className="auth-links">
+          <Link to="/forgot-password" data-cy="forgot-link">
+            Esqueci minha senha
+          </Link>
+          <Link to="/register" data-cy="register-link">
+            Criar conta
+          </Link>
+        </div>
       </Card>
     </main>
   )
